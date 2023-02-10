@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { login, getRoles } from '@/api/user'
+import { login, getRoles } from '@/api'
 import { initDynamicRoutes } from '@/router'
 export default {
   name: 'LoginIndex',
@@ -50,7 +50,7 @@ export default {
     return {
       // 管理员 admin 123456  普通用户 student 123456
       form: {
-        username: 'admin',
+        username: 'super',
         password: '123456'
       },
       loading: false
@@ -71,29 +71,50 @@ export default {
     }
   },
   methods: {
-    onLogin () {
+    async onLogin () {
       this.loading = true
-      login(this.form).then(res => {
-        console.log(res, 'login=>res')
-        // 将用户身份存入vuex 普通用户身份: student 管理员用户身份: admin
-        this.$store.commit('setRole', res.data.role)
 
-        this.$store.commit('setUsername', res.data.username)
-        this.$store.commit('setPhoto', res.data.photo)
-        sessionStorage.setItem('token', res.data.token)
+      let result = await login(this.form);
+      console.log(result)
+      if(result.data.errCode == 10001){
+        this.$message.error(result.data.msg);
+        this.loading = false
+        return;
+      }
+      const {role,username,photo,rights} = result.data.user
+      this.$store.commit('setRole', role);
+      this.$store.commit('setUsername', username);
+      this.$store.commit('setPhoto', photo);
+      localStorage.setItem('token', result.data.token);
+      this.$store.commit('setRightList', rights)
+      this.loading = false
+      this.$message.success('登陆成功')
 
-        getRoles(res.data.role).then(ret => {
-          console.log(ret.data, 'getRoles=>ret.data')
-          // 将对应身份下的路由存储到vuex
-          this.$store.commit('setRightList', ret.data)
-          this.loading = false
-          this.$message.success('登陆成功')
+      // 根据用户所具备的权限 动态添加路由规则
+      initDynamicRoutes()
+      this.$router.push('/home')
+      console.log('路由跳转')
+      // login(this.form).then(res => {
+      //   console.log(res, 'login=>res')
+      //   // 将用户身份存入vuex 普通用户身份: student 管理员用户身份: admin
+      //   this.$store.commit('setRole', res.data.role)
 
-          // 根据用户所具备的权限 动态添加路由规则
-          initDynamicRoutes()
-          this.$router.push('/')
-        })
-      })
+      //   this.$store.commit('setUsername', res.data.username)
+      //   this.$store.commit('setPhoto', res.data.photo)
+      //   sessionStorage.setItem('token', res.data.token)
+
+      //   getRoles(res.data.role).then(ret => {
+      //     console.log(ret.data, 'getRoles=>ret.data')
+      //     // 将对应身份下的路由存储到vuex
+      //     this.$store.commit('setRightList', ret.data)
+      //     this.loading = false
+      //     this.$message.success('登陆成功')
+
+      //     // 根据用户所具备的权限 动态添加路由规则
+      //     initDynamicRoutes()
+      //     this.$router.push('/')
+      //   })
+      // })
     }
   }
 }

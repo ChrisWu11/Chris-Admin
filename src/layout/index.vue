@@ -58,8 +58,9 @@ export default {
   mounted () { },
   methods: {
     logout () {
-      sessionStorage.clear()
-      this.$router.push({ name: 'login' })
+      // sessionStorage.clear()
+      localStorage.removeItem('token');
+      this.$router.push('/login')
       // 删除vuex中的数据 让当前页面刷新
       window.location.reload()
     }

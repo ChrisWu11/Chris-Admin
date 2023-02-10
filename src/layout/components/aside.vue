@@ -9,18 +9,18 @@
     active-text-color="#ffd04b"
     :collapse="isCollapse"
     :collapse-transition="false"
-    router
+    router=""
   >
     <!-- 侧边栏logo -->
     <div class="logo-aside"></div>
-    <el-menu-item index="/">
+    <el-menu-item index="/home">
       <i style="padding-right: 10px" class="el-icon-s-home"></i>
       <span slot="title">首页</span>
     </el-menu-item>
-    <el-menu-item index="/chart">
+    <!-- <el-menu-item index="/home/chart">
       <i style="padding-right: 10px" class="el-icon-s-data"></i>
       <span slot="title">图表</span>
-    </el-menu-item>
+    </el-menu-item> -->
     <!-- <el-menu-item index="/cesium">
       <i style="padding-right: 10px" class="el-icon-odometer"></i>
       <span slot="title">地图</span>
@@ -41,10 +41,10 @@
       </template>
       <!-- 二级菜单 -->
       <el-menu-item
-        :index="'/' + subItem.path"
+        :index="'/home/' + subItem.path"
         v-for="subItem in item.children"
         :key="subItem.index"
-        @click="saveNavState('/' + subItem.path)"
+        @click="saveNavState('/home/' + subItem.path)"
       >
         <template slot="title">
           <!-- 图标 -->
@@ -56,10 +56,10 @@
     </el-submenu>
     <!-- 没有二级菜单的路由从这里循环 -->
     <el-menu-item
-      :index="'/' + item.path"
+      :index="'/home/' + item.path"
       v-for="item in itemlist"
       :key="item.index"
-      @click="saveNavState('/' + item.path)"
+      @click="saveNavState('/home/' + item.path)"
     >
       <template slot="title">
         <!-- 图标 -->
@@ -111,7 +111,10 @@ export default {
     handleClose (key, keyPath) {
       console.log(key, keyPath)
     },
-    saveNavState () {}
+    saveNavState () {},
+    toPath(){
+      this.$router.push('/chart')
+    }
   }
 }
 </script>
@@ -122,7 +125,7 @@ export default {
   height: 57px;
   margin: 10px 0 0 12px;
   padding-right: 40px;
-  background: url(./logo.png) no-repeat;
+  background: url(./logo1.png) no-repeat;
 }
 .iconfont {
   padding: 0 20px 0 5px;

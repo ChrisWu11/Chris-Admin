@@ -1,34 +1,55 @@
 <template>
- <div class="container">
-    <el-row>
-      <el-button>默认按钮</el-button>
-      <el-button type="primary">主要按钮</el-button>
-      <el-button type="success">成功按钮</el-button>
-      <el-button type="info">信息按钮</el-button>
-      <el-button type="warning">警告按钮</el-button>
-      <el-button type="danger">危险按钮</el-button>
-    </el-row>
- </div>
+  <div class="container">
+    <!-- <button @click="makeWorker">开始线程</button> -->
+    <!--在计算时 往input输入值时 没有发生卡顿-->
+    <!-- <p><input type="text" /></p> -->
+
+    <SlotDemo>
+      <template #header>
+        <h1>A secret makes a woman woman</h1>
+      </template>
+
+      <template #link>
+        <h2 v-html="link"></h2>
+      </template>
+
+      <template slot-scope="{kris}">
+        Hello {{kris}}
+      </template>
+    </SlotDemo>
+  </div>
 </template>
 
 <script>
+// import testWorker from "./test.worker.js";
+import SlotDemo from "../../components/SlotDemo";
 export default {
-  name: 'UserIndex',
-  components: {},
+  name: "UserIndex",
+  components: { SlotDemo },
   props: {},
-  data () {
+  data() {
     return {
-
-    }
+      link:'点击<a href="#">这里</a>'
+    };
   },
   computed: {},
   watch: {},
-  created () {},
-  mounted () {},
-  methods: {}
-}
+  created() {},
+  mounted() {},
+  methods: {
+    // makeWorker() {
+    //   let worker = new testWorker();
+    //   worker.postMessage(JSON.stringify({ statu: "start" }));
+    //   setTimeout(() => {
+    //     console.log("initWorker1");
+    //   }, 0);
+    //   worker.onmessage = function (event) {
+    //     console.log("onmessage", event.data.value);
+    //   };
+    // },
+  },
+};
 </script>
 
 <style scoped lang="less">
-
 </style>

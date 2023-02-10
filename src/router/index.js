@@ -3,21 +3,27 @@ import store from '@/store'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+
 Vue.use(VueRouter)
+const originalPush = VueRouter.prototype.push
+ 
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 // 动态路由
 const tableRule = {
-  path: '/table',
+  path: '/home/table',
   name: 'table',
   component: () => import('@/views/table/index.vue')
 }
 const imageRule = {
-  path: '/image',
+  path: '/home/image',
   name: 'image',
   component: () => import('@/views/image')
 }
 const userRule = {
-  path: '/users',
+  path: '/home/users',
   name: 'users',
   component: () => import('@/views/users')
 }
@@ -36,12 +42,16 @@ const ruleMapping = {
 
 const routes = [
   {
+    path: '/',
+    redirect: '/login'
+  },
+  {
     path: '/login',
     // name: 'login', // 这里如果有name 控制台会提醒
     component: () => import('@/views/login')
   },
   {
-    path: '/',
+    path: '/home',
     component: Layout,
     children: [
       {
@@ -50,19 +60,16 @@ const routes = [
         component: () => import('@/views/home')
       },
       {
-        path: '/chart',
+        path: '/home/chart',
         component: () => import('@/views/chart')
       },
       {
-        path: '/cesium',
+        path: '/home/cesium',
         component: () => import('@/views/404')
       }
     ]
-  }
-  // {
-  //   path: '*',
-  //   component: () => import('@/views/404')
-  // }
+  },
+  
 ]
 
 const router = new VueRouter({
@@ -71,10 +78,12 @@ const router = new VueRouter({
 
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') {
+  if (to.path === '/login' || to.path === '/') {
+    // console.log('toLogin')
     next()
   } else {
-    const token = sessionStorage.getItem('token')
+    const token = localStorage.getItem('token')
+    console.log(1111)
     if (!token) {
       next('/login')
     } else {
@@ -84,19 +93,21 @@ router.beforeEach((to, from, next) => {
 })
 
 export function initDynamicRoutes () {
-  console.log(router.options.routes, 'router.options.routes')
+  // console.log(router.options.routes, 'router.options.routes')
   // 根据二级权限 对路由规则进行动态的添加
   const currentRoutes = router.options.routes
+  console.log('currentRoutes',currentRoutes)
   // currentRoutes[2].children.push()
   const rightList = store.state.rightList
-  // console.log(rightList)
+  
+  console.log('rightList',rightList)
   rightList.forEach(item => { // 如果是没有子路由的话 就直接添加进去 如果有子路由的话就进入二级权限遍历
     // console.log(item, 'item-1')
     if (item.path) {
       const temp = ruleMapping[item.path]
       // 路由规则中添加元数据meta
       temp.meta = item.rights
-      currentRoutes[1].children.push(temp)
+      currentRoutes[2].children.push(temp)
     }
 
     item.children.forEach(item => {
@@ -105,7 +116,7 @@ export function initDynamicRoutes () {
       const temp = ruleMapping[item.path]
       // 路由规则中添加元数据meta
       temp.meta = item.rights
-      currentRoutes[1].children.push(temp)
+      currentRoutes[2].children.push(temp)
     })
   })
   // console.log(currentRoutes)

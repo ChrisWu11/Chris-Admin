@@ -16,7 +16,8 @@ const actionMapping = {
 request.interceptors.request.use(req => {
   // console.log(req.url)
   // console.log(req.method)
-  if (req.url !== '/login' && req.url !== '/roles') {
+  console.log('req.url',req.url)
+  if (req.url !== '/token') {
     // 不是登录的请求 也不是获取权限的请求 则在请求头中加入token  不知道如何使用Mock来验证请求头中的token 故此处注释
     // req.headers.Authorization = sessionStorage.getItem('token')
     const action = actionMapping[req.method]

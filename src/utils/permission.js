@@ -13,8 +13,8 @@ Vue.directive('permission', {
     // console.log(router.currentRoute.meta, '按钮权限')
     if (router.currentRoute.meta.indexOf(action) === -1) { // 等于-1说明没找到 不具备权限
       if (effect === 'disabled') {
-        el.disabled = true
-        el.classList.add('is-disabled')
+        el.disabled = true;
+        el.classList.add('is-disabled');
       } else {
         el.parentNode.removeChild(el)
       }
